@@ -1,13 +1,40 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useTodos } from "./hooks/useTodos";
 import AddTodo from "./components/AddTodo";
 import TodoItem from "./components/TodoItem";
 
 export default function Home() {
   const { todos, addTodo, toggleTodo, deleteTodo } = useTodos();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const remaining = todos.filter((t) => !t.done).length;
+
+  if (!isHydrated) return null;
+
+  const sortedTodos = [...todos].sort((a, b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const getPriority = (dueDate?: string) => {
+      if (!dueDate) return 999;
+      const due = new Date(dueDate);
+      const diffDays = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays;
+    };
+
+    const aPriority = getPriority(a.dueDate);
+    const bPriority = getPriority(b.dueDate);
+
+    return aPriority - bPriority;
+  });
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-start justify-center pt-20 px-4">
@@ -31,7 +58,7 @@ export default function Home() {
           </p>
         ) : (
           <ul className="mt-4 flex flex-col gap-2">
-            {todos.map((todo) => (
+            {sortedTodos.map((todo) => (
               <TodoItem
                 key={todo.id}
                 todo={todo}
