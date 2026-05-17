@@ -17,7 +17,7 @@ export function useTodos() {
     if (!trimmed) return;
     setTodos((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), text: trimmed, done: false, createdAt: Date.now() },
+      { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, text: trimmed, done: false, createdAt: Date.now() },
     ]);
   }, []);
 
