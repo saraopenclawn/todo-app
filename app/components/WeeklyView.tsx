@@ -2,6 +2,7 @@
 
 import { Todo } from "../hooks/useTodos";
 import TodoItem from "./TodoItem";
+import { parseLocalDate } from "../utils/dateUtils";
 
 interface Props {
   todos: Todo[];
@@ -33,7 +34,7 @@ export default function WeeklyView({ todos, onToggle, onDelete }: Props) {
   const groupedByWeek = new Map<string, Todo[]>();
 
   todos.forEach((todo) => {
-    const date = todo.dueDate ? new Date(todo.dueDate) : new Date();
+    const date = todo.dueDate ? parseLocalDate(todo.dueDate) || new Date() : new Date();
     const weekStart = getWeekStart(date);
     const weekKey = weekStart.toISOString();
 

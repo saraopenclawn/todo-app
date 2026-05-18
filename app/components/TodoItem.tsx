@@ -1,6 +1,7 @@
 "use client";
 
 import { Todo } from "../hooks/useTodos";
+import { parseLocalDate } from "../utils/dateUtils";
 
 interface Props {
   todo: Todo;
@@ -11,7 +12,9 @@ interface Props {
 function getPriorityColor(dueDate?: string): string {
   if (!dueDate) return "text-gray-400";
 
-  const due = new Date(dueDate);
+  const due = parseLocalDate(dueDate);
+  if (!due) return "text-gray-400";
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -26,7 +29,9 @@ function getPriorityColor(dueDate?: string): string {
 
 function formatDate(dateString?: string): string {
   if (!dateString) return "";
-  const date = new Date(dateString);
+  const date = parseLocalDate(dateString);
+  if (!date) return "";
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 

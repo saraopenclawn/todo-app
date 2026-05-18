@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Todo } from "../hooks/useTodos";
 import TodoItem from "./TodoItem";
+import { parseLocalDate, getLocalDateString } from "../utils/dateUtils";
 
 interface Props {
   todos: Todo[];
@@ -17,8 +18,9 @@ export default function MonthlyView({ todos, onToggle, onDelete }: Props) {
 
   const groupedByDate = new Map<string, Todo[]>();
   todos.forEach((todo) => {
-    const date = todo.dueDate ? new Date(todo.dueDate) : new Date();
-    const dateKey = date.toISOString().split("T")[0];
+    const date = todo.dueDate ? parseLocalDate(todo.dueDate) : new Date();
+    if (!date) return;
+    const dateKey = getLocalDateString(date);
     if (!groupedByDate.has(dateKey)) {
       groupedByDate.set(dateKey, []);
     }
@@ -83,9 +85,8 @@ export default function MonthlyView({ todos, onToggle, onDelete }: Props) {
               <div key={`empty-${i}`} className="aspect-square" />
             ))}
             {days.map((day) => {
-              const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-                .toISOString()
-                .split("T")[0];
+              const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+              const dateStr = getLocalDateString(dayDate);
               const hasTodos = groupedByDate.has(dateStr) && groupedByDate.get(dateStr)!.length > 0;
               const isSelected = selectedDate === dateStr;
               const isToday =

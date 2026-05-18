@@ -2,6 +2,7 @@
 
 import { Todo } from "../hooks/useTodos";
 import TodoItem from "./TodoItem";
+import { parseLocalDate } from "../utils/dateUtils";
 
 interface Props {
   todos: Todo[];
@@ -18,7 +19,8 @@ export default function DailyView({ todos, onToggle, onDelete }: Props) {
 
     const getPriority = (dueDate?: string) => {
       if (!dueDate) return 999;
-      const due = new Date(dueDate);
+      const due = parseLocalDate(dueDate);
+      if (!due) return 999;
       const diffDays = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
       return diffDays;
     };
