@@ -9,9 +9,20 @@ interface Props {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, updates: Partial<Todo>) => void;
+  onAddSubtask?: (todoId: string, text: string) => void;
+  onToggleSubtask?: (todoId: string, subtaskId: string) => void;
+  onDeleteSubtask?: (todoId: string, subtaskId: string) => void;
 }
 
-export default function DailyView({ todos, onToggle, onDelete, onUpdate }: Props) {
+export default function DailyView({
+  todos,
+  onToggle,
+  onDelete,
+  onUpdate,
+  onAddSubtask,
+  onToggleSubtask,
+  onDeleteSubtask,
+}: Props) {
   const sortedTodos = [...todos].sort((a, b) => {
     if (a.done !== b.done) return a.done ? 1 : -1;
 
@@ -41,6 +52,9 @@ export default function DailyView({ todos, onToggle, onDelete, onUpdate }: Props
           onToggle={onToggle}
           onDelete={onDelete}
           onUpdate={onUpdate}
+          onAddSubtask={onAddSubtask}
+          onToggleSubtask={onToggleSubtask}
+          onDeleteSubtask={onDeleteSubtask}
         />
       ))}
     </ul>

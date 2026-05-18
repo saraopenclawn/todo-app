@@ -10,6 +10,9 @@ interface Props {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, updates: Partial<Todo>) => void;
+  onAddSubtask?: (todoId: string, text: string) => void;
+  onToggleSubtask?: (todoId: string, subtaskId: string) => void;
+  onDeleteSubtask?: (todoId: string, subtaskId: string) => void;
 }
 
 function getPriorityColor(dueDate?: string): string {
@@ -47,8 +50,18 @@ function formatDate(dateString?: string): string {
   return date.toLocaleDateString();
 }
 
-export default function TodoItem({ todo, onToggle, onDelete, onUpdate }: Props) {
+export default function TodoItem({
+  todo,
+  onToggle,
+  onDelete,
+  onUpdate,
+  onAddSubtask,
+  onToggleSubtask,
+  onDeleteSubtask,
+}: Props) {
   const [showDetails, setShowDetails] = useState(false);
+  const subtaskCount = todo.subtasks?.length || 0;
+  const completedSubtasks = todo.subtasks?.filter((s) => s.done).length || 0;
 
   return (
     <>
@@ -78,6 +91,19 @@ export default function TodoItem({ todo, onToggle, onDelete, onUpdate }: Props) 
               {todo.description}
             </span>
           )}
+          {subtaskCount > 0 && (
+            <div className="flex items-center gap-2 mt-1">
+              <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                <div
+                  className="bg-indigo-600 h-1.5 rounded-full"
+                  style={{ width: `${(completedSubtasks / subtaskCount) * 100}%` }}
+                />
+              </div>
+              <span className="text-xs text-gray-500">
+                {completedSubtasks}/{subtaskCount}
+              </span>
+            </div>
+          )}
         </div>
         <button
           onClick={() => onDelete(todo.id)}
@@ -93,6 +119,9 @@ export default function TodoItem({ todo, onToggle, onDelete, onUpdate }: Props) 
         isOpen={showDetails}
         onClose={() => setShowDetails(false)}
         onUpdate={onUpdate}
+        onAddSubtask={onAddSubtask}
+        onToggleSubtask={onToggleSubtask}
+        onDeleteSubtask={onDeleteSubtask}
       />
     </>
   );

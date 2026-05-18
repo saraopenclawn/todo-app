@@ -9,6 +9,9 @@ interface Props {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, updates: Partial<Todo>) => void;
+  onAddSubtask?: (todoId: string, text: string) => void;
+  onToggleSubtask?: (todoId: string, subtaskId: string) => void;
+  onDeleteSubtask?: (todoId: string, subtaskId: string) => void;
 }
 
 function getWeekStart(date: Date): Date {
@@ -31,7 +34,15 @@ function formatWeekRange(date: Date): string {
   return `${startStr} - ${endStr}`;
 }
 
-export default function WeeklyView({ todos, onToggle, onDelete, onUpdate }: Props) {
+export default function WeeklyView({
+  todos,
+  onToggle,
+  onDelete,
+  onUpdate,
+  onAddSubtask,
+  onToggleSubtask,
+  onDeleteSubtask,
+}: Props) {
   const groupedByWeek = new Map<string, Todo[]>();
 
   todos.forEach((todo) => {
@@ -84,6 +95,9 @@ export default function WeeklyView({ todos, onToggle, onDelete, onUpdate }: Prop
                   onToggle={onToggle}
                   onDelete={onDelete}
                   onUpdate={onUpdate}
+                  onAddSubtask={onAddSubtask}
+                  onToggleSubtask={onToggleSubtask}
+                  onDeleteSubtask={onDeleteSubtask}
                 />
               ))}
             </ul>

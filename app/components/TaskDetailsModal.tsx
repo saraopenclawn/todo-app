@@ -1,20 +1,32 @@
 "use client";
 
 import { Todo } from "../hooks/useTodos";
+import SubtaskList from "./SubtaskList";
 
 interface Props {
   todo: Todo;
   isOpen: boolean;
   onClose: () => void;
   onUpdate: (id: string, updates: Partial<Todo>) => void;
+  onAddSubtask?: (todoId: string, text: string) => void;
+  onToggleSubtask?: (todoId: string, subtaskId: string) => void;
+  onDeleteSubtask?: (todoId: string, subtaskId: string) => void;
 }
 
-export default function TaskDetailsModal({ todo, isOpen, onClose, onUpdate }: Props) {
+export default function TaskDetailsModal({
+  todo,
+  isOpen,
+  onClose,
+  onUpdate,
+  onAddSubtask,
+  onToggleSubtask,
+  onDeleteSubtask,
+}: Props) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-96 overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">Task Details</h2>
           <button
@@ -61,6 +73,17 @@ export default function TaskDetailsModal({ todo, isOpen, onClose, onUpdate }: Pr
               rows={4}
             />
           </div>
+
+          {onAddSubtask && onToggleSubtask && onDeleteSubtask && (
+            <div className="pt-4 border-t border-gray-200">
+              <SubtaskList
+                subtasks={todo.subtasks}
+                onAdd={(text) => onAddSubtask(todo.id, text)}
+                onToggle={(id) => onToggleSubtask(todo.id, id)}
+                onDelete={(id) => onDeleteSubtask(todo.id, id)}
+              />
+            </div>
+          )}
 
           <div className="flex gap-2 pt-4 border-t border-gray-200">
             <button

@@ -2,6 +2,12 @@
 
 import { useState, useCallback, useEffect } from "react";
 
+export interface Subtask {
+  id: string;
+  text: string;
+  done: boolean;
+}
+
 export interface Todo {
   id: string;
   text: string;
@@ -9,6 +15,7 @@ export interface Todo {
   createdAt: number;
   dueDate?: string;
   description?: string;
+  subtasks?: Subtask[];
 }
 
 const STORAGE_KEY = "todos";
@@ -56,5 +63,47 @@ export function useTodos() {
     );
   }, []);
 
-  return { todos, addTodo, toggleTodo, deleteTodo, updateTodo };
+  const addSubtask = useCallback((todoId: string, text: string) => {
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === todoId
+          ? {
+              ...t,
+              subtasks: [
+                ...(t.subtasks || []),
+                { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, text, done: false },
+              ],
+            }
+          : t
+      )
+    );
+  }, []);
+
+  const toggleSubtask = useCallback((todoId: string, subtaskId: string) => {
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === todoId
+          ? {
+              ...t,
+              subtasks: t.subtasks?.map((s) => (s.id === subtaskId ? { ...s, done: !s.done } : s)),
+            }
+          : t
+      )
+    );
+  }, []);
+
+  const deleteSubtask = useCallback((todoId: string, subtaskId: string) => {
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === todoId
+          ? {
+              ...t,
+              subtasks: t.subtasks?.filter((s) => s.id !== subtaskId),
+            }
+          : t
+      )
+    );
+  }, []);
+
+  return { todos, addTodo, toggleTodo, deleteTodo, updateTodo, addSubtask, toggleSubtask, deleteSubtask };
 }

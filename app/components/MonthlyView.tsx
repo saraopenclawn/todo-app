@@ -10,9 +10,20 @@ interface Props {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, updates: Partial<Todo>) => void;
+  onAddSubtask?: (todoId: string, text: string) => void;
+  onToggleSubtask?: (todoId: string, subtaskId: string) => void;
+  onDeleteSubtask?: (todoId: string, subtaskId: string) => void;
 }
 
-export default function MonthlyView({ todos, onToggle, onDelete, onUpdate }: Props) {
+export default function MonthlyView({
+  todos,
+  onToggle,
+  onDelete,
+  onUpdate,
+  onAddSubtask,
+  onToggleSubtask,
+  onDeleteSubtask,
+}: Props) {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -141,6 +152,9 @@ export default function MonthlyView({ todos, onToggle, onDelete, onUpdate }: Pro
                     onToggle={onToggle}
                     onDelete={onDelete}
                     onUpdate={onUpdate}
+                    onAddSubtask={onAddSubtask}
+                    onToggleSubtask={onToggleSubtask}
+                    onDeleteSubtask={onDeleteSubtask}
                   />
                 ))}
               </ul>
