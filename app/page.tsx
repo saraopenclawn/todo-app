@@ -3,11 +3,16 @@
 import { useState, useEffect } from "react";
 import { useTodos } from "./hooks/useTodos";
 import AddTodo from "./components/AddTodo";
-import TodoItem from "./components/TodoItem";
+import DailyView from "./components/DailyView";
+import WeeklyView from "./components/WeeklyView";
+import MonthlyView from "./components/MonthlyView";
+
+type ViewMode = "daily" | "weekly" | "monthly";
 
 export default function Home() {
   const { todos, addTodo, toggleTodo, deleteTodo } = useTodos();
   const [isHydrated, setIsHydrated] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("daily");
 
   useEffect(() => {
     setIsHydrated(true);
@@ -17,28 +22,9 @@ export default function Home() {
 
   if (!isHydrated) return null;
 
-  const sortedTodos = [...todos].sort((a, b) => {
-    if (a.done !== b.done) return a.done ? 1 : -1;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const getPriority = (dueDate?: string) => {
-      if (!dueDate) return 999;
-      const due = new Date(dueDate);
-      const diffDays = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-      return diffDays;
-    };
-
-    const aPriority = getPriority(a.dueDate);
-    const bPriority = getPriority(b.dueDate);
-
-    return aPriority - bPriority;
-  });
-
   return (
     <main className="min-h-screen bg-gray-50 flex items-start justify-center pt-20 px-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-2xl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Todo List</h1>
           {todos.length > 0 && (
@@ -52,21 +38,49 @@ export default function Home() {
 
         <AddTodo onAdd={addTodo} />
 
+        <div className="flex gap-2 mt-6 mb-6">
+          <button
+            onClick={() => setViewMode("daily")}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              viewMode === "daily"
+                ? "bg-indigo-600 text-white"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-gray-300"
+            }`}
+          >
+            Daily
+          </button>
+          <button
+            onClick={() => setViewMode("weekly")}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              viewMode === "weekly"
+                ? "bg-indigo-600 text-white"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-gray-300"
+            }`}
+          >
+            Weekly
+          </button>
+          <button
+            onClick={() => setViewMode("monthly")}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              viewMode === "monthly"
+                ? "bg-indigo-600 text-white"
+                : "bg-white text-gray-700 border border-gray-200 hover:border-gray-300"
+            }`}
+          >
+            Monthly
+          </button>
+        </div>
+
         {todos.length === 0 ? (
           <p className="text-center text-gray-400 text-sm mt-12">
             No tasks yet. Add one above!
           </p>
+        ) : viewMode === "daily" ? (
+          <DailyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
+        ) : viewMode === "weekly" ? (
+          <WeeklyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
         ) : (
-          <ul className="mt-4 flex flex-col gap-2">
-            {sortedTodos.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onToggle={toggleTodo}
-                onDelete={deleteTodo}
-              />
-            ))}
-          </ul>
+          <MonthlyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
         )}
       </div>
     </main>
