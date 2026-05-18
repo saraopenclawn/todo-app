@@ -3,21 +3,25 @@
 import { useState, FormEvent } from "react";
 
 interface Props {
-  onAdd: (text: string, dueDate?: string) => void;
+  onAdd: (text: string, dueDate?: string, description?: string) => void;
 }
 
 export default function AddTodo({ onAdd }: Props) {
   const [value, setValue] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [description, setDescription] = useState("");
   const [showDate, setShowDate] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!value.trim()) return;
-    onAdd(value, dueDate || undefined);
+    onAdd(value, dueDate || undefined, description || undefined);
     setValue("");
     setDueDate("");
+    setDescription("");
     setShowDate(false);
+    setShowDescription(false);
   }
 
   return (
@@ -50,13 +54,33 @@ export default function AddTodo({ onAdd }: Props) {
         />
       )}
 
-      <button
-        type="button"
-        onClick={() => setShowDate(!showDate)}
-        className="text-xs text-gray-500 hover:text-indigo-600 transition-colors"
-      >
-        {showDate ? "Hide due date" : "+ Add due date (optional)"}
-      </button>
+      {showDescription && (
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Add details about this task..."
+          className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+          rows={3}
+          autoFocus
+        />
+      )}
+
+      <div className="flex gap-3 text-xs">
+        <button
+          type="button"
+          onClick={() => setShowDate(!showDate)}
+          className="text-gray-500 hover:text-indigo-600 transition-colors"
+        >
+          {showDate ? "Hide due date" : "+ Add due date"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowDescription(!showDescription)}
+          className="text-gray-500 hover:text-indigo-600 transition-colors"
+        >
+          {showDescription ? "Hide details" : "+ Add details"}
+        </button>
+      </div>
     </form>
   );
 }

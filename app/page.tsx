@@ -10,7 +10,7 @@ import MonthlyView from "./components/MonthlyView";
 type ViewMode = "daily" | "weekly" | "monthly";
 
 export default function Home() {
-  const { todos, addTodo, toggleTodo, deleteTodo } = useTodos();
+  const { todos, addTodo, toggleTodo, deleteTodo, updateTodo } = useTodos();
   const [isHydrated, setIsHydrated] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("daily");
 
@@ -76,11 +76,11 @@ export default function Home() {
             No tasks yet. Add one above!
           </p>
         ) : viewMode === "daily" ? (
-          <DailyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
+          <DailyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdate={updateTodo} />
         ) : viewMode === "weekly" ? (
-          <WeeklyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
+          <WeeklyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdate={updateTodo} />
         ) : (
-          <MonthlyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
+          <MonthlyView todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdate={updateTodo} />
         )}
       </div>
     </main>

@@ -9,9 +9,10 @@ interface Props {
   todos: Todo[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onUpdate: (id: string, updates: Partial<Todo>) => void;
 }
 
-export default function MonthlyView({ todos, onToggle, onDelete }: Props) {
+export default function MonthlyView({ todos, onToggle, onDelete, onUpdate }: Props) {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -139,6 +140,7 @@ export default function MonthlyView({ todos, onToggle, onDelete }: Props) {
                     todo={todo}
                     onToggle={onToggle}
                     onDelete={onDelete}
+                    onUpdate={onUpdate}
                   />
                 ))}
               </ul>

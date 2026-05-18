@@ -8,6 +8,7 @@ export interface Todo {
   done: boolean;
   createdAt: number;
   dueDate?: string;
+  description?: string;
 }
 
 const STORAGE_KEY = "todos";
@@ -30,12 +31,12 @@ export function useTodos() {
     }
   }, [todos, isHydrated]);
 
-  const addTodo = useCallback((text: string, dueDate?: string) => {
+  const addTodo = useCallback((text: string, dueDate?: string, description?: string) => {
     const trimmed = text.trim();
     if (!trimmed) return;
     setTodos((prev) => [
       ...prev,
-      { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, text: trimmed, done: false, createdAt: Date.now(), dueDate },
+      { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, text: trimmed, done: false, createdAt: Date.now(), dueDate, description },
     ]);
   }, []);
 
@@ -49,5 +50,11 @@ export function useTodos() {
     setTodos((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  return { todos, addTodo, toggleTodo, deleteTodo };
+  const updateTodo = useCallback((id: string, updates: Partial<Todo>) => {
+    setTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
+    );
+  }, []);
+
+  return { todos, addTodo, toggleTodo, deleteTodo, updateTodo };
 }

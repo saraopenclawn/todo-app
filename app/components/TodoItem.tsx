@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { Todo } from "../hooks/useTodos";
 import { parseLocalDate } from "../utils/dateUtils";
+import TaskDetailsModal from "./TaskDetailsModal";
 
 interface Props {
   todo: Todo;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onUpdate: (id: string, updates: Partial<Todo>) => void;
 }
 
 function getPriorityColor(dueDate?: string): string {
@@ -44,37 +47,53 @@ function formatDate(dateString?: string): string {
   return date.toLocaleDateString();
 }
 
-export default function TodoItem({ todo, onToggle, onDelete }: Props) {
+export default function TodoItem({ todo, onToggle, onDelete, onUpdate }: Props) {
+  const [showDetails, setShowDetails] = useState(false);
+
   return (
-    <li className="flex items-start gap-3 py-2 px-4 bg-white rounded-lg shadow-sm border border-gray-100 group hover:border-gray-200 transition-colors">
-      <input
-        type="checkbox"
-        checked={todo.done}
-        onChange={() => onToggle(todo.id)}
-        aria-label={`Mark "${todo.text}" as ${todo.done ? "undone" : "done"}`}
-        className="w-5 h-5 cursor-pointer accent-indigo-600 mt-0.5 flex-shrink-0"
-      />
-      <div className="flex-1 min-w-0">
-        <span
-          className={`block text-sm leading-snug ${
-            todo.done ? "line-through text-gray-400" : "text-gray-800"
-          }`}
-        >
-          {todo.text}
-        </span>
-        {todo.dueDate && (
-          <span className={`block text-xs mt-1 ${getPriorityColor(todo.dueDate)}`}>
-            {formatDate(todo.dueDate)}
+    <>
+      <li className="flex items-start gap-3 py-2 px-4 bg-white rounded-lg shadow-sm border border-gray-100 group hover:border-gray-200 transition-colors">
+        <input
+          type="checkbox"
+          checked={todo.done}
+          onChange={() => onToggle(todo.id)}
+          aria-label={`Mark "${todo.text}" as ${todo.done ? "undone" : "done"}`}
+          className="w-5 h-5 cursor-pointer accent-indigo-600 mt-0.5 flex-shrink-0"
+        />
+        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setShowDetails(true)}>
+          <span
+            className={`block text-sm leading-snug ${
+              todo.done ? "line-through text-gray-400" : "text-gray-800"
+            }`}
+          >
+            {todo.text}
           </span>
-        )}
-      </div>
-      <button
-        onClick={() => onDelete(todo.id)}
-        aria-label={`Delete "${todo.text}"`}
-        className="text-gray-400 hover:text-red-500 transition-colors text-lg leading-none flex-shrink-0 mt-0.5"
-      >
-        ×
-      </button>
-    </li>
+          {todo.dueDate && (
+            <span className={`block text-xs mt-1 ${getPriorityColor(todo.dueDate)}`}>
+              {formatDate(todo.dueDate)}
+            </span>
+          )}
+          {todo.description && (
+            <span className="block text-xs text-gray-500 mt-1 line-clamp-1">
+              {todo.description}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={() => onDelete(todo.id)}
+          aria-label={`Delete "${todo.text}"`}
+          className="text-gray-400 hover:text-red-500 transition-colors text-lg leading-none flex-shrink-0 mt-0.5"
+        >
+          ×
+        </button>
+      </li>
+
+      <TaskDetailsModal
+        todo={todo}
+        isOpen={showDetails}
+        onClose={() => setShowDetails(false)}
+        onUpdate={onUpdate}
+      />
+    </>
   );
 }

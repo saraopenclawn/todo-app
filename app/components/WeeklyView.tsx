@@ -8,6 +8,7 @@ interface Props {
   todos: Todo[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onUpdate: (id: string, updates: Partial<Todo>) => void;
 }
 
 function getWeekStart(date: Date): Date {
@@ -30,7 +31,7 @@ function formatWeekRange(date: Date): string {
   return `${startStr} - ${endStr}`;
 }
 
-export default function WeeklyView({ todos, onToggle, onDelete }: Props) {
+export default function WeeklyView({ todos, onToggle, onDelete, onUpdate }: Props) {
   const groupedByWeek = new Map<string, Todo[]>();
 
   todos.forEach((todo) => {
@@ -82,6 +83,7 @@ export default function WeeklyView({ todos, onToggle, onDelete }: Props) {
                   todo={todo}
                   onToggle={onToggle}
                   onDelete={onDelete}
+                  onUpdate={onUpdate}
                 />
               ))}
             </ul>
